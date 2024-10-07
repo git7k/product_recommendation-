@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Product Recommendation System</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; }
+        form { margin-bottom: 20px; }
+        input, button { margin: 5px 0; }
+        #results { border: 1px solid #ccc; padding: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>E-commerce Product Recommendation System</h1>
+
+    <h2>Add Product</h2>
+    <form id="addProductForm">
+        <input type="text" id="productName" placeholder="Enter Product Name" required><br>
+        <input type="number" id="productPrice" placeholder="Enter Price" step="0.01" required><br>
+        <input type="text" id="productCategory" placeholder="Enter Category" required><br>
+        <button type="submit">Add Product</button>
+    </form>
+
+    <h2>Get Products</h2>
+    <form id="getProductsForm">
+        <input type="number" id="page" placeholder="Page Number" value="1" required>
+        <input type="number" id="limit" placeholder="Products per Page" value="10" required>
+        <button type="submit">Get Products</button>
+    </form>
+
+    <h2>Record Purchase</h2>
+    <form id="recordPurchaseForm">
+        <input type="text" id="userId" placeholder="Enter User ID" required>
+        <input type="text" id="productId" placeholder="Enter Product ID" required>
+        <button type="submit">Record Purchase</button>
+    </form>
+
+    <h2>Get Recommendations</h2>
+    <form id="getRecommendationsForm">
+        <input type="text" id="recommendUserId" placeholder="Enter User ID" required>
+        <button type="submit">Get Recommendations</button>
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        // Adding a new product
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            const product = {   
+                name: document.getElementById('productName').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                category: document.getElementById('productCategory').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/products`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+
+                const result = await response.json();
+                document.getElementById('results').innerText = 'Product successfully added:\n' + JSON.stringify(result, null, 2);
+            } catch (error) {
+                console.error('Error adding product:', error);
+                document.getElementById('results').innerText = 'Failed to add product.';
+            }
+        });
+
+        // Fetching products with pagination
+        document.getElementById('getProductsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const page = document.getElementById('page').value;
+            const limit = document.getElementById('limit').value;
+
+            try {
+                const response = await fetch(`${API_URL}/products?page=${page}&limit=${limit}`);
+                const result = await response.json();
+                document.getElementById('results').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                document.getElementById('results').innerText = 'Failed to fetch products.';
+            }
+        });
+
+        // Recording a purchase
+        document.getElementById('recordPurchaseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = document.getElementById('userId').value;
+            const productId = document.getElementById('productId').value;
+
+            try {
+                const response = await fetch(`${API_URL}/users/${userId}/purchases`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId })
+                });
+                const result = await response.json();
+                document.getElementById('results').innerText = 'Thank You for Shopping!' + JSON.stringify(result, null, 2);
+            } catch (error) {
+                console.error('Error recording purchase:', error);
+                document.getElementById('results').innerText = 'Failed to record purchase.';
+            }
+        });
+
+        // Getting recommendations
+        document.getElementById('getRecommendationsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = document.getElementById('recommendUserId').value;
+
+            try {
+                const response = await fetch(`${API_URL}/users/${userId}/recommendations`);
+                const result = await response.json();
+                document.getElementById('results').innerText = 'Here are some recommended product ID for user ' + userId + ':\n' + JSON.stringify(result, null, 2);
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                document.getElementById('results').innerText = 'Failed to fetch recommendations.';
+            }
+        });
+    </script>
+</body>
+</html>
