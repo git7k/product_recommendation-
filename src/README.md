@@ -10,7 +10,7 @@ This project implements a basic product recommendation system.
 3. Install mongoDB
 4. Start MongoDB- sudo systemctl start mongod
 5. npm install
-6. create .env in the root folder- MONGODB_URI=mongodb://localhost:27017/your_database_name
+6. create .env in the root folder- MONGODB_URI=mongodb://mongodb:27017/ecommerce_recommendationdb
 PORT=3000
 7. inside project folder compile type script- npx tsc
 8. node dist/app.js
