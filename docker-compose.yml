@@ -5,7 +5,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/ecommerce_recommendationdb
+      - MONGODB_URI=mongodb://mongodb:27017/ecommerce_recommendation
     depends_on:
       - mongodb
   mongodb:
