@@ -52,5 +52,11 @@ export const getRecommendations = async (userId: string) => {
   recommendProducts.forEach(id => popularProducts.unshift(id)); // Add user-based recommendations
 
   //limiting to 5 recommendaitons
-  return Array.from(new Set(popularProducts)).slice(0, 5);
+  const recommendedProducts = await Product.find({ _id: { $in: Array.from(new Set(popularProducts)).slice(0, 5) } });
+
+  return recommendedProducts.map(product => ({
+    id: product._id,
+    name: product.name
+  }));
+
 };

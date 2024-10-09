@@ -103,6 +103,7 @@
                     body: JSON.stringify({ productId })
                 });
                 const result = await response.json();
+                
                 document.getElementById('results').innerText = 'Thank You for Shopping!' + JSON.stringify(result, null, 2);
             } catch (error) {
                 console.error('Error recording purchase:', error);
@@ -117,9 +118,10 @@
             const userId = document.getElementById('recommendUserId').value;
 
             try {
-                const response = await fetch(`${API_URL}/users/${userId}/recommendations`);
-                const result = await response.json();
-                document.getElementById('results').innerText = 'Here are some recommended product ID for user ' + userId + ':\n' + JSON.stringify(result, null, 2);
+        const response = await fetch(`${API_URL}/users/${userId}/recommendations`);
+        const result = await response.json();
+        const recommendationsList = result.map(product => `${product.name} (ID: ${product.id})`).join('\n');
+        document.getElementById('results').innerText = `Here are some recommended products for user ${userId}:\n${recommendationsList}`;
             } catch (error) {
                 console.error('Error fetching recommendations:', error);
                 document.getElementById('results').innerText = 'Failed to fetch recommendations.';
